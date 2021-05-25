@@ -1,2 +1,2 @@
 # DistributeDataLoader
-This is a distributeDataLoader built on top of ray for pytorch.
+This is a DistributeDataLoader built on top of ray for pytorch.
