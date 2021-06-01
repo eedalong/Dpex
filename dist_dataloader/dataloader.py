@@ -18,7 +18,7 @@ from torch.utils.data.dataloader import Dataset, Sampler, _worker_init_fn_t, _co
 
 
 class DistDataLoader(torch.utils.data.DataLoader):
-    def __init__(self, dataset: Dataset[T_co], batch_size: Optional[int] = 1,
+    def __init__(self, dataset: Dataset[T_co], distribute_mode: Optional[bool] = False, batch_size: Optional[int] = 1,
                  shuffle: bool = False, sampler: Optional[Sampler[int]] = None,
                  batch_sampler: Optional[Sampler[Sequence[int]]] = None,
                  num_workers: int = 0, collate_fn: Optional[_collate_fn_t] = None,
@@ -32,13 +32,18 @@ class DistDataLoader(torch.utils.data.DataLoader):
             worker_init_fn=worker_init_fn, multiprocessing_context=multiprocessing_context, generator=generator,
             prefetch_factor=prefetch_factor, persistent_workers=True
         )
+        self.distribute_mode = distribute_mode
 
     def _get_iterator(self) -> 'torch.utils.data.dataloader._BaseDataLoaderIter':
         if self.num_workers == 0:
             return torch.utils.data.dataloader._SingleProcessDataLoaderIter(self)
-        else:
+        elif self.distribute_mode:
             self.check_worker_number_rationality()
             return _DistributedDataLoaderIter(self)
+        else:
+            self.check_worker_number_rationality()
+            return torch.utils.data.dataloader._MultiProcessingDataLoaderIter(self)
+
 
 
 class _DistributedDataLoaderIter(torch.utils.data.dataloader._BaseDataLoaderIter):
@@ -199,8 +204,7 @@ class _DistributedDataLoaderIter(torch.utils.data.dataloader._BaseDataLoaderIter
                 self._rcvd_idx += 1
             else:
                 # no valid `self._rcvd_idx` is found (i.e., didn't break)
-                if not self._persistent_workers:
-                    pass
+                self._workers_status[data.worker_id] = False
                 raise StopIteration
 
             # Now `self._rcvd_idx` is the batch index we want to fetch
@@ -216,12 +220,9 @@ class _DistributedDataLoaderIter(torch.utils.data.dataloader._BaseDataLoaderIter
             if self._dataset_kind == _DatasetKind.Iterable:
                 # Check for _IterableDatasetStopIteration
                 if isinstance(data, torch_data_utils.worker._IterableDatasetStopIteration):
-                    '''
                     if self._persistent_workers:
                         self._workers_status[data.worker_id] = False
-                    else:
-                        self._mark_worker_as_unavailable(data.worker_id)
-                    '''
+
                     self._try_put_index()
                     continue
 
@@ -231,5 +232,20 @@ class _DistributedDataLoaderIter(torch.utils.data.dataloader._BaseDataLoaderIter
             else:
                 del self._task_info[idx]
                 return self._process_data(data)
+
+    def _shutdown_workers(self):
+        if not self._shutdown:
+            self._shutdown = True
+            # Exit workers now.
+            for queue in self._index_queues:
+                queue.put(None)
+            if hasattr(self, '_pin_memory_thread'):
+                self._pin_memory_thread_done_event.set()
+                self._worker_result_queue.put((None, None))
+                self._pin_memory_thread.join()
+                self._worker_result_queue.shutdown()
+
+    def __del__(self):
+        self._shutdown_workers()
 
 

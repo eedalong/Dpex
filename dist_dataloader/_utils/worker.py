@@ -10,11 +10,16 @@ from torch._utils import ExceptionWrapper
 from torch.utils.data import _DatasetKind
 from torch.utils.data._utils.worker import _IterableDatasetStopIteration, _ResumeIteration
 from typing import Union
+from dataclasses import dataclass
 import ray
 import asyncio
 from torch.utils.data._utils import MP_STATUS_CHECK_INTERVAL
 from ray.util.queue import Empty
 
+
+@dataclass(frozen=True)
+class WorkerExitCallBack(object):
+    worker_id: int
 
 @ray.remote
 def _worker_loop(dataset_kind, dataset, index_queue, data_queue,
@@ -48,11 +53,7 @@ def _worker_loop(dataset_kind, dataset, index_queue, data_queue,
     # `None`.
     iteration_end = False
     while True:
-        try:
-            r = index_queue.get()
-        except Exception as e:
-            continue
-
+        r = index_queue.get()
 
         if isinstance(r, _ResumeIteration):
             # Acknowledge the main process
@@ -94,4 +95,4 @@ def _worker_loop(dataset_kind, dataset, index_queue, data_queue,
                         where="in DataLoader worker process {}".format(worker_id))
         data_queue.put((idx, data))
         del data, idx, index, r  # save memory
-
+    data_queue.put(WorkerExitCallBack(worker_id=worker_id))

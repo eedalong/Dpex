@@ -21,8 +21,8 @@ test_data = datasets.FashionMNIST(
 )
 device = "cpu"
 
-train_loader = dataloader.DistDataLoader(training_data, num_workers=10, batch_size=100, shuffle=True)
-test_loader = dataloader.DistDataLoader(training_data, num_workers=1, batch_size=100, shuffle=False)
+train_loader = dataloader.DistDataLoader(training_data, distribute_mode=True, num_workers=10, batch_size=100, shuffle=True)
+test_loader = dataloader.DistDataLoader(training_data, distribute_mode=True, num_workers=1, batch_size=100, shuffle=False)
 
 num_epochs = 5
 for epoch in range(num_epochs):
