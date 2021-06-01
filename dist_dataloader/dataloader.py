@@ -60,14 +60,12 @@ class _DistributedDataLoaderIter(torch.utils.data.dataloader._BaseDataLoaderIter
         self._shutdown = False
         self._worker_result_queue = ray_queue()  # type: ignore[var-annotated]
         self._index_queues = []
-        self._workers = []
 
         for i in range(self._num_workers):
             index_queue = ray_queue()
             dist_utils.worker._worker_loop.remote(self._dataset_kind, self._dataset, index_queue,
                                                   self._worker_result_queue, self._auto_collation, self._collate_fn,
                                                   self._drop_last, self._base_seed, self._worker_init_fn, i)
-            self._workers.append(i)
             self._index_queues.append(index_queue)
         if self._pin_memory:
             self._pin_memory_thread_done_event = threading.Event()

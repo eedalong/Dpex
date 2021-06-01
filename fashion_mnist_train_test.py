@@ -129,16 +129,12 @@ for epoch in range(num_epochs):
             accuracy_list.append(accuracy)
 
             print("Iteration: {}, Loss: {}, Accuracy: {}%".format(count, loss.data, accuracy))
-            break
 
-del train_loader
-del test_loader
-time.sleep(60)
-"""
+
 plt.plot(iteration_list, loss_list)
 plt.xlabel("No. of Iteration")
 plt.ylabel("Loss")
 plt.title("Iterations vs Loss")
 plt.show()
-"""
+
 
