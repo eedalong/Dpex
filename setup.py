@@ -13,7 +13,7 @@ setup(
       long_description = read('README.md'),
       long_description_content_type="text/markdown",
       packages         = setuptools.find_packages(),
-      version          = '1.2',
+      version          = '1.0',
       author           = 'Xiulong Yuan, Zhan Lu, Zheng Zeng, Wenxuan Ma',
       author_email     = 'yuanxl19@mails.tsinghua.edu.cn, lu-z18@mails.tsinghua.edu.cn, zengz17@mails.tsinghua.edu.cn',
       url              = 'https://github.com/eedalong/DistributeDataLoader',
