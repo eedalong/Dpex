@@ -25,13 +25,12 @@ class DistDataLoader(torch.utils.data.DataLoader):
                  pin_memory: bool = False, drop_last: bool = False,
                  timeout: float = 0, worker_init_fn: Optional[_worker_init_fn_t] = None,
                  multiprocessing_context=None, generator=None,
-                 *, prefetch_factor: int = 2,
-                 persistent_workers: bool = False):
+                 *, prefetch_factor: int = 2):
         super(DistDataLoader, self).__init__(
             dataset=dataset,  batch_size=batch_size, shuffle=shuffle, sampler=sampler, batch_sampler=batch_sampler,
             num_workers=num_workers, collate_fn=collate_fn, pin_memory=pin_memory, drop_last=drop_last, timeout=timeout,
             worker_init_fn=worker_init_fn, multiprocessing_context=multiprocessing_context, generator=generator,
-            prefetch_factor=prefetch_factor, persistent_workers=persistent_workers
+            prefetch_factor=prefetch_factor, persistent_workers=True
         )
 
     def _get_iterator(self) -> 'torch.utils.data.dataloader._BaseDataLoaderIter':
@@ -202,7 +201,6 @@ class _DistributedDataLoaderIter(torch.utils.data.dataloader._BaseDataLoaderIter
                 # no valid `self._rcvd_idx` is found (i.e., didn't break)
                 if not self._persistent_workers:
                     pass
-                    #self._shutdown_workers()
                 raise StopIteration
 
             # Now `self._rcvd_idx` is the batch index we want to fetch

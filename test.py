@@ -5,13 +5,17 @@ import ray
 ray.init(address="auto")
 training_data = datasets.FashionMNIST(
     root="data",
-    train=True,
+    train=False,
     download=True,
     transform=ToTensor()
 )
 
-mnist_loader = dataloader.DistDataLoader(training_data, num_workers=4, shuffle=True)
+mnist_loader = dataloader.DistDataLoader(training_data, num_workers=10, batch_size=128, shuffle=True)
 
-for item in mnist_loader:
-    print(item)
+for epoch in range(3):
+    print(f"epoch = {epoch}")
+    for index, item in enumerate(mnist_loader):
+        if index % 1000 == 0:
+            print(f"check data index = {index}, check item shape {item[0].shape},  {item[1].shape}")
+
 
