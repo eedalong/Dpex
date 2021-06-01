@@ -5,7 +5,7 @@ import ray
 import torch.nn as nn
 import torch
 import matplotlib.pyplot as plt
-
+import time
 from torch.autograd import Variable
 
 
@@ -67,7 +67,7 @@ error = nn.CrossEntropyLoss()
 learning_rate = 0.001
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 train_loader = dataloader.DistDataLoader(training_data, distribute_mode=True, num_workers=10, batch_size=100, shuffle=True)
-test_loader = dataloader.DistDataLoader(training_data, distribute_mode=True, num_workers=1, batch_size=100, shuffle=False)
+test_loader = dataloader.DistDataLoader(test_data, distribute_mode=True, num_workers=1, batch_size=100, shuffle=False)
 
 num_epochs = 1
 count = 0
@@ -129,10 +129,16 @@ for epoch in range(num_epochs):
             accuracy_list.append(accuracy)
 
             print("Iteration: {}, Loss: {}, Accuracy: {}%".format(count, loss.data, accuracy))
+            break
 
+del train_loader
+del test_loader
+time.sleep(60)
+"""
 plt.plot(iteration_list, loss_list)
 plt.xlabel("No. of Iteration")
 plt.ylabel("Loss")
 plt.title("Iterations vs Loss")
 plt.show()
+"""
 

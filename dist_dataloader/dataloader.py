@@ -204,7 +204,6 @@ class _DistributedDataLoaderIter(torch.utils.data.dataloader._BaseDataLoaderIter
                 self._rcvd_idx += 1
             else:
                 # no valid `self._rcvd_idx` is found (i.e., didn't break)
-                self._workers_status[data.worker_id] = False
                 raise StopIteration
 
             # Now `self._rcvd_idx` is the batch index we want to fetch
@@ -234,18 +233,19 @@ class _DistributedDataLoaderIter(torch.utils.data.dataloader._BaseDataLoaderIter
                 return self._process_data(data)
 
     def _shutdown_workers(self):
+        """
+        for now, we only shutdown pin_memory_thread
+        :return:
+        """
         if not self._shutdown:
             self._shutdown = True
-            # Exit workers now.
-            for queue in self._index_queues:
-                queue.put(None)
             if hasattr(self, '_pin_memory_thread'):
-                self._pin_memory_thread_done_event.set()
                 self._worker_result_queue.put((None, None))
+                self._pin_memory_thread_done_event.set()
                 self._pin_memory_thread.join()
-                self._worker_result_queue.shutdown()
 
     def __del__(self):
         self._shutdown_workers()
+
 
 

@@ -26,12 +26,7 @@ def _pin_memory_loop(in_queue, out_queue, device_id, done_event):
     # See NOTE [ Data Loader Multiprocessing Shutdown Logic ] for details on the
     # logic of this function.
     while not done_event.is_set():
-        try:
-            r = in_queue.get()
-        except Empty:
-            continue
-        except asyncio.exceptions.TimeoutError:
-            continue
+        r = in_queue.get()
         idx, data = r
         if not done_event.is_set() and not isinstance(data, ExceptionWrapper):
             try:
