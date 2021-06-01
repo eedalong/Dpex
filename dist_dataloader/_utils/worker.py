@@ -6,13 +6,14 @@ static methods.
 
 import torch
 import random
-import queue
 from torch._utils import ExceptionWrapper
 from torch.utils.data import _DatasetKind
 from torch.utils.data._utils.worker import _IterableDatasetStopIteration, _ResumeIteration
 from typing import Union
 import ray
+import asyncio
 from torch.utils.data._utils import MP_STATUS_CHECK_INTERVAL
+from ray.util.queue import Empty
 
 
 @ray.remote
@@ -48,9 +49,11 @@ def _worker_loop(dataset_kind, dataset, index_queue, data_queue,
     iteration_end = False
     while True:
         try:
-            r = index_queue.get(timeout=MP_STATUS_CHECK_INTERVAL)
-        except queue.Empty:
+            r = index_queue.get()
+        except Exception as e:
             continue
+
+
         if isinstance(r, _ResumeIteration):
             # Acknowledge the main process
             data_queue.put((r, None))

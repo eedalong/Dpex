@@ -1,1 +1,1 @@
-from . import worker
+from . import worker, pin_memory

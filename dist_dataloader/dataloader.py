@@ -70,7 +70,7 @@ class _DistributedDataLoaderIter(torch.utils.data.dataloader._BaseDataLoaderIter
             # Queue is not type-annotated
             self._data_queue = queue.Queue()  # type: ignore[var-annotated]
             pin_memory_thread = threading.Thread(
-                target=torch_data_utils.pin_memory._pin_memory_loop,
+                target=dist_utils.pin_memory._pin_memory_loop,
                 args=(self._worker_result_queue, self._data_queue,
                       torch.cuda.current_device(),
                       self._pin_memory_thread_done_event))
