@@ -32,7 +32,7 @@ class RandomDataset(Dataset):
 
 dataset = RandomDataset(input_size, data_size)
 # 3）使用DistributedSampler
-rand_loader = DistDataLoader(dataset=dataset, batch_size=batch_size, sampler=DistributedSampler(dataset))
+rand_loader = DistDataLoader(dataset=dataset, batch_size=batch_size, sampler=DistributedSampler(dataset), num_workers=10)
 
 class Model(nn.Module):
     def __init__(self, input_size, output_size):

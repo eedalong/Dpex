@@ -19,8 +19,8 @@ class RandomDataset(Dataset):
     def __len__(self):
         return self.len
 
-rand_loader = dataloader.DistDataLoader(dataset=RandomDataset(input_size, data_size),
-                         batch_size=batch_size, shuffle=True)
+rand_loader = dataloader.DistDataLoader(dataset=RandomDataset(input_size, data_size), batch_size=batch_size, shuffle=True,
+                                        num_workers=10)
 
 class Model(nn.Module):
     # Our model
