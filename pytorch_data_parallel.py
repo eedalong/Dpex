@@ -3,6 +3,10 @@ import torch.nn as nn
 from torch.autograd import Variable
 from torch.utils.data import Dataset, DataLoader
 from dist_dataloader import dataloader
+
+import ray
+ray.init(address="auto")
+
 input_size = 5
 output_size = 2
 batch_size = 30
@@ -19,8 +23,8 @@ class RandomDataset(Dataset):
     def __len__(self):
         return self.len
 
-rand_loader = dataloader.DistDataLoader(dataset=RandomDataset(input_size, data_size), batch_size=batch_size, shuffle=True,
-                                        num_workers=10)
+rand_loader = dataloader.DistDataLoader(dataset=RandomDataset(input_size, data_size), distribute_mode=True,
+                                        batch_size=batch_size, shuffle=True, num_workers=10)
 
 class Model(nn.Module):
     # Our model

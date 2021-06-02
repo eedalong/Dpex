@@ -3,7 +3,9 @@ import torch.nn as nn
 from torch.utils.data import Dataset
 from dist_dataloader.dataloader import DistDataLoader
 from torch.utils.data.distributed import DistributedSampler
+import ray
 
+ray.init(address="auto")
 
 # start command: CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 pytorch_ddp.py
 # 1) 初始化
@@ -32,7 +34,7 @@ class RandomDataset(Dataset):
 
 dataset = RandomDataset(input_size, data_size)
 # 3）使用DistributedSampler
-rand_loader = DistDataLoader(dataset=dataset, batch_size=batch_size, sampler=DistributedSampler(dataset), num_workers=10)
+rand_loader = DistDataLoader(dataset=dataset, distribute_mode=True, batch_size=batch_size, sampler=DistributedSampler(dataset), num_workers=10)
 
 class Model(nn.Module):
     def __init__(self, input_size, output_size):
