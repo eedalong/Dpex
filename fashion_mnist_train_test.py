@@ -66,7 +66,7 @@ error = nn.CrossEntropyLoss()
 
 learning_rate = 0.001
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-train_loader = dataloader.DistDataLoader(training_data, distribute_mode=True, num_workers=10, batch_size=100, shuffle=True)
+train_loader = dataloader.DistDataLoader(training_data, distribute_mode=True, num_workers=4, batch_size=100, shuffle=True)
 test_loader = dataloader.DistDataLoader(test_data, distribute_mode=True, num_workers=1, batch_size=100, shuffle=False)
 
 num_epochs = 1

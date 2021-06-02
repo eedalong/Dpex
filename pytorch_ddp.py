@@ -4,6 +4,8 @@ from torch.utils.data import Dataset
 from dist_dataloader.dataloader import DistDataLoader
 from torch.utils.data.distributed import DistributedSampler
 
+
+# start command: CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 pytorch_ddp.py
 # 1) 初始化
 torch.distributed.init_process_group(backend="nccl")
 
