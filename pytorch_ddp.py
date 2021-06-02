@@ -22,7 +22,7 @@ device = torch.device("cuda", local_rank)
 class RandomDataset(Dataset):
     def __init__(self, size, length):
         self.len = length
-        self.data = torch.randn(length, size).to('cuda')
+        self.data = torch.randn(length, size)
 
     def __getitem__(self, index):
         return self.data[index]
