@@ -59,8 +59,9 @@ test_data = datasets.FashionMNIST(
     download=True,
     transform=ToTensor()
 )
-device = "cpu"
+device = "cuda"
 model = FashionCNN()
+model.to(device)
 
 error = nn.CrossEntropyLoss()
 
