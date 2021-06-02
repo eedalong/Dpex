@@ -14,7 +14,7 @@ torch.distributed.init_process_group(backend="nccl")
 input_size = 5
 output_size = 2
 batch_size = 30
-data_size = 90
+data_size = 9000
 
 # 2） 配置每个进程的gpu
 local_rank = torch.distributed.get_rank()
