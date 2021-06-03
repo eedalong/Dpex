@@ -12,9 +12,6 @@ from torch.utils.data._utils.worker import _IterableDatasetStopIteration, _Resum
 from typing import Union
 from dataclasses import dataclass
 import ray
-import asyncio
-from torch.utils.data._utils import MP_STATUS_CHECK_INTERVAL
-from ray.util.queue import Empty
 
 
 @dataclass(frozen=True)

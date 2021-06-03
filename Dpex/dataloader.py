@@ -1,11 +1,7 @@
-
-
 import threading
 import itertools
 import queue
-
 import torch
-
 from torch.utils.data import IterableDataset
 import torch.utils.data._utils as torch_data_utils
 from torch.utils.data._utils import ExceptionWrapper
@@ -31,7 +27,7 @@ class DpexDataLoader(torch.utils.data.DataLoader):
             prefetch_factor=prefetch_factor, persistent_workers=True
         )
         self.distribute_mode = distribute_mode
-        self.ray_adress = head_address
+        self.head_address = head_address
 
     def _get_iterator(self) -> 'torch.utils.data.dataloader._BaseDataLoaderIter':
         if self.num_workers == 0:
