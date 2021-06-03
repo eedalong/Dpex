@@ -50,8 +50,8 @@ class _DistributedDataLoaderIter(torch.utils.data.dataloader._BaseDataLoaderIter
 
         # we delay initialization for ray here
         import dist_dataloader._utils as dist_utils
-        from ray.util.queue import Queue as ray_queue
         import ray
+        from ray.util.queue import Queue as ray_queue
         ray.init(address="auto")
         super(_DistributedDataLoaderIter, self).__init__(loader)
         assert self._num_workers > 0
