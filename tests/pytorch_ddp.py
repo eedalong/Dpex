@@ -3,9 +3,6 @@ import torch.nn as nn
 from torch.utils.data import Dataset
 from dist_dataloader.dataloader import DistDataLoader
 from torch.utils.data.distributed import DistributedSampler
-import ray
-
-ray.init(address="auto")
 
 # start command: CUDA_VISIBLE_DEVICES=1,6,7 python -m torch.distributed.launch --nproc_per_node=2 pytorch_ddp.py
 # 1) 初始化

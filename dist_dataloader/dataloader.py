@@ -8,8 +8,6 @@ import torch
 
 from torch.utils.data import IterableDataset
 import torch.utils.data._utils as torch_data_utils
-import dist_dataloader._utils as dist_utils
-from ray.util.queue import Queue as ray_queue
 from torch.utils.data._utils import ExceptionWrapper
 from torch.utils.data.dataloader import _DatasetKind
 from typing import Sequence, Optional
@@ -50,7 +48,11 @@ class _DistributedDataLoaderIter(torch.utils.data.dataloader._BaseDataLoaderIter
 
     def __init__(self, loader):
 
-
+        # we delay initialization for ray here
+        import dist_dataloader._utils as dist_utils
+        from ray.util.queue import Queue as ray_queue
+        import ray
+        ray.init(address="auto")
         super(_DistributedDataLoaderIter, self).__init__(loader)
         assert self._num_workers > 0
         assert self._prefetch_factor > 0

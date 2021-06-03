@@ -1,7 +1,6 @@
 from torchvision import datasets
 from torchvision.transforms import ToTensor
 from dist_dataloader import dataloader
-import ray
 import torch.nn as nn
 import torch
 import matplotlib.pyplot as plt
@@ -44,8 +43,6 @@ class FashionCNN(nn.Module):
 
         return out
 
-# init ray environment
-ray.init(address="auto")
 
 training_data = datasets.FashionMNIST(
     root="data",

@@ -4,8 +4,6 @@ from torch.autograd import Variable
 from torch.utils.data import Dataset, DataLoader
 from dist_dataloader import dataloader
 
-import ray
-ray.init(address="auto")
 
 input_size = 5
 output_size = 2

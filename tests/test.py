@@ -1,10 +1,8 @@
 from torchvision import datasets
 from torchvision.transforms import ToTensor
 from dist_dataloader import dataloader
-import ray
 import time
 # init ray environment
-ray.init(address="auto")
 
 training_data = datasets.FashionMNIST(
     root="data",

@@ -1,8 +1,6 @@
 from torch.utils.data import Dataset
 from dist_dataloader import dataloader
-import ray
 import time
-ray.init(address="auto")
 class BugDataset(Dataset):
     def __init__(self):
         super(BugDataset, self).__init__()
