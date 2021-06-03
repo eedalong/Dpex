@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from torch.utils.data import Dataset
-from dist_dataloader.dataloader import DistDataLoader
+from Dpex.dataloader import DpexDataLoader
 from torch.utils.data.distributed import DistributedSampler
 
 # start command: CUDA_VISIBLE_DEVICES=1,6,7 python -m torch.distributed.launch --nproc_per_node=2 pytorch_ddp.py
@@ -31,7 +31,7 @@ class RandomDataset(Dataset):
 
 dataset = RandomDataset(input_size, data_size)
 # 3）使用DistributedSampler
-rand_loader = DistDataLoader(dataset=dataset, distribute_mode=True, batch_size=batch_size, sampler=DistributedSampler(dataset), num_workers=10)
+rand_loader = DpexDataLoader(dataset=dataset, distribute_mode=True, batch_size=batch_size, sampler=DistributedSampler(dataset), num_workers=10)
 
 class Model(nn.Module):
     def __init__(self, input_size, output_size):

@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 from torch.utils.data import Dataset, DataLoader
-from dist_dataloader import dataloader
+from Dpex import dataloader
 
 
 input_size = 5
@@ -21,7 +21,7 @@ class RandomDataset(Dataset):
     def __len__(self):
         return self.len
 
-rand_loader = dataloader.DistDataLoader(dataset=RandomDataset(input_size, data_size),
+rand_loader = dataloader.DpexDataLoader(dataset=RandomDataset(input_size, data_size),
                                         distribute_mode=True, batch_size=batch_size, shuffle=True, num_workers=10)
 
 class Model(nn.Module):

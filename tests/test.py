@@ -1,6 +1,6 @@
 from torchvision import datasets
 from torchvision.transforms import ToTensor
-from dist_dataloader import dataloader
+from Dpex import dataloader
 import time
 # init ray environment
 
@@ -19,8 +19,8 @@ test_data = datasets.FashionMNIST(
 device = "cpu"
 
 # then we recreate dataloader
-train_loader = dataloader.DistDataLoader(training_data, distribute_mode=True, num_workers=10, batch_size=100, shuffle=True)
-test_loader = dataloader.DistDataLoader(test_data, distribute_mode=True, num_workers=1, batch_size=100, shuffle=False)
+train_loader = dataloader.DpexDataLoader(training_data, distribute_mode=True, num_workers=10, batch_size=100, shuffle=True)
+test_loader = dataloader.DpexDataLoader(test_data, distribute_mode=True, num_workers=1, batch_size=100, shuffle=False)
 
 for epoch in range(3):
     for index, (image, label) in enumerate(train_loader):

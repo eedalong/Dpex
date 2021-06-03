@@ -1,5 +1,5 @@
 from torch.utils.data import Dataset
-from dist_dataloader import dataloader
+from Dpex import dataloader
 import time
 class BugDataset(Dataset):
     def __init__(self):
@@ -17,7 +17,7 @@ class BugDataset(Dataset):
         return self.count * 100
 
 bug_dataset = BugDataset()
-train_loader = dataloader.DistDataLoader(bug_dataset, distribute_mode=True, num_workers=10, batch_size=100, shuffle=True)
+train_loader = dataloader.DpexDataLoader(bug_dataset, distribute_mode=True, num_workers=10, batch_size=100, shuffle=True)
 for epoch in range(5):
     for item in train_loader:
         print(item)

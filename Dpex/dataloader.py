@@ -15,8 +15,8 @@ from typing import Sequence, Optional
 from torch.utils.data.dataloader import Dataset, Sampler, _worker_init_fn_t, _collate_fn_t, T_co
 
 
-class DistDataLoader(torch.utils.data.DataLoader):
-    def __init__(self, dataset: Dataset[T_co], distribute_mode: Optional[bool] = False, batch_size: Optional[int] = 1,
+class DpexDataLoader(torch.utils.data.DataLoader):
+    def __init__(self, dataset: Dataset[T_co], distribute_mode: Optional[bool] = False, head_address="auto", batch_size: Optional[int] = 1,
                  shuffle: bool = False, sampler: Optional[Sampler[int]] = None,
                  batch_sampler: Optional[Sampler[Sequence[int]]] = None,
                  num_workers: int = 0, collate_fn: Optional[_collate_fn_t] = None,
@@ -24,39 +24,40 @@ class DistDataLoader(torch.utils.data.DataLoader):
                  timeout: float = 0, worker_init_fn: Optional[_worker_init_fn_t] = None,
                  multiprocessing_context=None, generator=None,
                  *, prefetch_factor: int = 2):
-        super(DistDataLoader, self).__init__(
+        super(DpexDataLoader, self).__init__(
             dataset=dataset,  batch_size=batch_size, shuffle=shuffle, sampler=sampler, batch_sampler=batch_sampler,
             num_workers=num_workers, collate_fn=collate_fn, pin_memory=pin_memory, drop_last=drop_last, timeout=timeout,
             worker_init_fn=worker_init_fn, multiprocessing_context=multiprocessing_context, generator=generator,
             prefetch_factor=prefetch_factor, persistent_workers=True
         )
         self.distribute_mode = distribute_mode
+        self.ray_adress = head_address
 
     def _get_iterator(self) -> 'torch.utils.data.dataloader._BaseDataLoaderIter':
         if self.num_workers == 0:
             return torch.utils.data.dataloader._SingleProcessDataLoaderIter(self)
         elif self.distribute_mode:
             self.check_worker_number_rationality()
-            return _DistributedDataLoaderIter(self)
+            return _RayDataLoaderIter(self)
         else:
             self.check_worker_number_rationality()
             return torch.utils.data.dataloader._MultiProcessingDataLoaderIter(self)
 
 
 
-class _DistributedDataLoaderIter(torch.utils.data.dataloader._BaseDataLoaderIter):
+class _RayDataLoaderIter(torch.utils.data.dataloader._BaseDataLoaderIter):
 
     def __init__(self, loader):
 
         # we delay initialization for ray here
-        import dist_dataloader._utils as dist_utils
+        import Dpex._utils as dist_utils
         import ray
         from ray.util.queue import Queue as ray_queue
-        ray.init(address="auto")
-        super(_DistributedDataLoaderIter, self).__init__(loader)
+        super(_RayDataLoaderIter, self).__init__(loader)
         assert self._num_workers > 0
         assert self._prefetch_factor > 0
 
+        ray.init(address=loader.head_address)
         self._worker_init_fn = loader.worker_init_fn
         self._worker_queue_idx_cycle = itertools.cycle(range(self._num_workers))
         self._shutdown = False

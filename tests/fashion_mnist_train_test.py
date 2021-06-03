@@ -1,8 +1,6 @@
 from torchvision import datasets
 from torchvision.transforms import ToTensor
-from dist_dataloader import dataloader
-
-import ray
+from Dpex import dataloader
 import torch.nn as nn
 import torch
 import matplotlib.pyplot as plt
@@ -45,8 +43,6 @@ class FashionCNN(nn.Module):
 
         return out
 
-# init ray environment
-ray.init(address="auto")
 
 training_data = datasets.FashionMNIST(
     root="data",
@@ -68,8 +64,8 @@ error = nn.CrossEntropyLoss()
 
 learning_rate = 0.001
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-train_loader = dataloader.DistDataLoader(training_data, distribute_mode=True, num_workers=4, batch_size=100, shuffle=True)
-test_loader = dataloader.DistDataLoader(test_data, distribute_mode=True, num_workers=1, batch_size=100, shuffle=False)
+train_loader = dataloader.DpexDataLoader(training_data, distribute_mode=True, num_workers=4, batch_size=100, shuffle=True)
+test_loader = dataloader.DpexDataLoader(test_data, distribute_mode=True, num_workers=1, batch_size=100, shuffle=False)
 
 num_epochs = 1
 count = 0

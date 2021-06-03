@@ -8,15 +8,15 @@ def read(fname):
 
 
 setup(
-      name             = 'PyTorch-DistributeLoader',
-      description      = 'Distributed DataLoader Based On Ray',
+      name             = 'Dpex',
+      description      = 'Pytorch Distributed DataLoader Based On Ray',
       long_description = read('README.md'),
       long_description_content_type="text/markdown",
       packages         = setuptools.find_packages(),
       version          = '1.0',
       author           = 'Xiulong Yuan, Zhan Lu, Zheng Zeng, Wenxuan Ma',
       author_email     = 'yuanxl19@mails.tsinghua.edu.cn, lu-z18@mails.tsinghua.edu.cn, zengz17@mails.tsinghua.edu.cn',
-      url              = 'https://github.com/eedalong/DistributeDataLoader',
+      url              = 'https://github.com/eedalong/Dpex',
       license          = 'License :: OSI Approved :: MIT License',
       platforms        = 'Linux',
       classifiers      = [
