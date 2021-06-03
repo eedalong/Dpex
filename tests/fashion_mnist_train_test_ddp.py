@@ -69,8 +69,8 @@ error = nn.CrossEntropyLoss()
 
 learning_rate = 0.001
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-train_loader = dataloader.DpexDataLoader(training_data, sampler=DistributedSampler(training_data), distribute_mode=True, num_workers=4, batch_size=100, shuffle=True)
-test_loader = dataloader.DpexDataLoader(test_data, sampler=DistributedSampler(test_data), distribute_mode=True, num_workers=1, batch_size=100, shuffle=False)
+train_loader = dataloader.DpexDataLoader(training_data, sampler=DistributedSampler(training_data), distribute_mode=True, num_workers=4, batch_size=100)
+test_loader = dataloader.DpexDataLoader(test_data, sampler=DistributedSampler(test_data), distribute_mode=True, num_workers=1, batch_size=100)
 
 num_epochs = 1
 count = 0
