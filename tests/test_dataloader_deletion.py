@@ -22,11 +22,5 @@ device = "cpu"
 train_loader = dataloader.DistDataLoader(training_data, distribute_mode=True, num_workers=10, batch_size=100, shuffle=True)
 test_loader = dataloader.DistDataLoader(test_data, distribute_mode=True, num_workers=1, batch_size=100, shuffle=False)
 
-for epoch in range(3):
-    for index, (image, label) in enumerate(train_loader):
-        if index % 100 == 0:
-            print(f"epoch_{epoch}:\titerations_{index}")
-    time.sleep(20)
-
-
-
+del train_loader
+del test_loader
