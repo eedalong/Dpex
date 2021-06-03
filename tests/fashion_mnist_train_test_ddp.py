@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import time
 from torch.autograd import Variable
 
+torch.distributed.init_process_group(backend="nccl")
 # 2） 配置每个进程的gpu
 local_rank = torch.distributed.get_rank()
 torch.cuda.set_device(local_rank)
