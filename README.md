@@ -5,10 +5,11 @@
 
 ![](imgs/1.1.png)
 ![](imgs/1.2.png)
-#### 1.1 数据预处理横向扩展
-#### 1.2 GPU资源和CPU资源使用解耦
-### 二、架构介绍（介绍Pytorch DataLoader本身的架构以及DistDataLoader的架构）
 
+### 二、架构介绍（介绍Pytorch DataLoader本身的架构以及DistDataLoader的架构）
+Dpex的采用了和Pytorch的DataLoader同样的架构设计并基于分布式计算框架Ray实现。
+
+![](imgs/1.3.png)
 ### 三、使用示例（展示在单卡训练，多卡训练时的使用示例）
 #### 3.1 单卡训练
     from torchvision import datasets
