@@ -1,13 +1,18 @@
 from torchvision import datasets
 from torchvision.transforms import ToTensor
-from dist_dataloader import dataloader
-import ray
+from Dpex import dataloader
+from torch.utils.data.distributed import DistributedSampler
 import torch.nn as nn
 import torch
 import matplotlib.pyplot as plt
 import time
 from torch.autograd import Variable
 
+torch.distributed.init_process_group(backend="nccl")
+# 2） 配置每个进程的gpu
+local_rank = torch.distributed.get_rank()
+torch.cuda.set_device(local_rank)
+device = torch.device("cuda", local_rank)
 
 class FashionCNN(nn.Module):
 
@@ -44,8 +49,6 @@ class FashionCNN(nn.Module):
 
         return out
 
-# init ray environment
-ray.init(address="auto")
 
 training_data = datasets.FashionMNIST(
     root="data",
@@ -59,15 +62,15 @@ test_data = datasets.FashionMNIST(
     download=True,
     transform=ToTensor()
 )
-device = "cpu"
+
 model = FashionCNN()
 
 error = nn.CrossEntropyLoss()
 
 learning_rate = 0.001
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-train_loader = dataloader.DistDataLoader(training_data, distribute_mode=True, num_workers=10, batch_size=100, shuffle=True)
-test_loader = dataloader.DistDataLoader(test_data, distribute_mode=True, num_workers=1, batch_size=100, shuffle=False)
+train_loader = dataloader.DpexDataLoader(training_data, sampler=DistributedSampler(training_data), distribute_mode=True, num_workers=4, batch_size=100)
+test_loader = dataloader.DpexDataLoader(test_data, sampler=DistributedSampler(test_data), distribute_mode=True, num_workers=1, batch_size=100)
 
 num_epochs = 1
 count = 0
@@ -79,6 +82,16 @@ accuracy_list = []
 # Lists for knowing classwise accuracy
 predictions_list = []
 labels_list = []
+
+if torch.cuda.is_available():
+    model.cuda()
+
+if torch.cuda.device_count() > 1:
+    print("Let's use", torch.cuda.device_count(), "GPUs!")
+    # 5) 封装
+    model = torch.nn.parallel.DistributedDataParallel(model,
+                                                      device_ids=[local_rank],
+                                                      output_device=local_rank)
 
 for epoch in range(num_epochs):
     for images, labels in train_loader:
