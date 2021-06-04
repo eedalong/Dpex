@@ -9,28 +9,36 @@
 
 ### 三、使用示例（展示在单卡训练，多卡训练时的使用示例）
 #### 3.1 单卡训练
-    from torch.utils.data import Dataset
+    from torchvision import datasets
+    from torchvision.transforms import ToTensor
     from Dpex import dataloader
-    class BugDataset(Dataset):
-        def __init__(self):
-            super(BugDataset, self).__init__()
-            self.count = 30
+    import time
+    # init ray environment
+    
+    training_data = datasets.FashionMNIST(
+        root="data",
+        train=True,
+        download=True,
+        transform=ToTensor()
+    )
+    test_data = datasets.FashionMNIST(
+        root="data",
+        train=False,
+        download=True,
+        transform=ToTensor()
+    )
+    device = "cpu"
+    
+    # then we recreate dataloader
+    train_loader = dataloader.DpexDataLoader(training_data, distribute_mode=True, num_workers=10, batch_size=100, shuffle=True)
+    test_loader = dataloader.DpexDataLoader(test_data, distribute_mode=True, num_workers=1, batch_size=100, shuffle=False)
+    
+    for epoch in range(3):
+        for index, (image, label) in enumerate(train_loader):
+            if index % 100 == 0:
+                print(f"epoch_{epoch}:\titerations_{index}")
+        time.sleep(20)
 
-        def __getitem__(self, index):
-            self.count += 1
-            if self.count > 0:
-                a = 1 / 0
-            time.sleep(1)
-            return self.count
-
-        def __len__(self):
-            return self.count * 100
-
-    bug_dataset = BugDataset()
-    train_loader = dataloader.DpexDataLoader(bug_dataset, distribute_mode=True, num_workers=10, batch_size=100, shuffle=True)
-    for epoch in range(5):
-        for item in train_loader:
-            print(item)
 #### 3.2 基于DataParallel的多卡训练
 如果你想在单机上使用DataParallel进行多卡的训练，只需要将Pytorch的DataLoader替换为Dpex中的DataLoader
 
