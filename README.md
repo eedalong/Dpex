@@ -3,8 +3,8 @@
 
 随着GPU与CPU的算力差距越来越大以及模型训练时的预处理Pipeline变得越来越复杂，CPU部分的数据预处理已经逐渐成为了模型训练的瓶颈所在，这导致单机的GPU配置的提升并不能带来期望的线性加速。预处理性能瓶颈的本质在于每个GPU能够使用的CPU算力受限，为了解决这个问题NVIDIA提出了scale up的方案——使用GPU完成数据预处理，而在这里我们给出scale out的方案——分布式数据预处理库Dpex。
 
-![](blob:https://ukzbv6lwlp.feishu.cn/490e1551-2ba3-403c-8dc0-22d5d2b328cc)
-![](blob:https://ukzbv6lwlp.feishu.cn/53871a21-a3b4-4904-a149-ce4d347234f7)
+![](imgs/1.1.png)
+![](imgs/1.2.png)
 #### 1.1 数据预处理横向扩展
 #### 1.2 GPU资源和CPU资源使用解耦
 ### 二、架构介绍（介绍Pytorch DataLoader本身的架构以及DistDataLoader的架构）
