@@ -169,6 +169,15 @@
 ### 四、Benchmark（展示使用DistDataLoader后模型精度没有影响，同时对部分数据预处理比较重的模型训练有明显加速）
 #### 4.1 模型精度Benchmark
 
+| **Accuracy**(%) | **Loss** | **GPU Settings** | **DataLoader(If distributed)** | **Epoch** | **Learning rate** | **Batch size** |
+| --------------- | -------- | ---------------- | ------------------------------ | --------- | ----------------- | -------------- |
+| 90.65           | 0.137    | Single GPU       | True                           | 40        | 0.001             | 100            |
+| 91.09           | 0.112    | Single GPU       | False                          | 40        | 0.001             | 100            |
+| 90.67           | 0.016    | DataParallel     | True                           | 40        | 0.001             | 100            |
+| 90.32           | 0.008    | DataParallel     | False                          | 40        | 0.001             | 100            |
+| 88.98           | 0.034    | DDP              | True                           | 40        | 0.001             | 100            |
+| 89.84           | 0.030    | DDP              | False                          | 40        | 0.001             | 100            |
+
 #### 4.2 训练速度Benchmark
 ### 五、环境依赖:
 #### 5.1 Ray集群搭建
