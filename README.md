@@ -7,10 +7,22 @@
 ![](imgs/1.2.png)
 
 ### 二、架构介绍（介绍Pytorch DataLoader本身的架构以及DistDataLoader的架构）
-Dpex的采用了和Pytorch的DataLoader同样的架构设计并基于分布式计算框架Ray实现。
-
+Dpex的采用了和Pytorch的DataLoader同样的架构设计并借助Ray将数据预处理任务调度至其他机器节点进行计算。
 ![](imgs/1.3.png)
-### 三、使用示例（展示在单卡训练，多卡训练时的使用示例）
+### 三、使用示例
+不仅在设计上，Dpex的实现上也完全兼容Pytorch的DataLoader。当并行数据预处理时，若设置distribute_mode为True则DpexDataLoader使用_RayDataLoaderIter实现分布式数据预处理，当设置为False时DpexDataLoader退回到使用Pytorch本身的_MultiProcessingDataLoaderIter 实现并行数据预处理与加载。
+    
+    class DpexDataLoader(torch.utils.data.DataLoader):
+        def __init__(self, dataset: Dataset[T_co], distribute_mode: Optional[bool] = False, head_address="auto", batch_size: Optional[int] = 1,
+                     shuffle: bool = False, sampler: Optional[Sampler[int]] = None,
+                     batch_sampler: Optional[Sampler[Sequence[int]]] = None,
+                     num_workers: int = 0, collate_fn: Optional[_collate_fn_t] = None,
+                     pin_memory: bool = False, drop_last: bool = False,
+                     timeout: float = 0, worker_init_fn: Optional[_worker_init_fn_t] = None,
+                     multiprocessing_context=None, generator=None,
+                     *, prefetch_factor: int = 2):
+    
+
 #### 3.1 单卡训练
     from torchvision import datasets
     from torchvision.transforms import ToTensor
