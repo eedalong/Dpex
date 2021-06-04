@@ -154,7 +154,7 @@ Dpex的采用了和Pytorch的DataLoader同样的架构设计并借助Ray将数�
 
 Dpex只是将单机数据预处理水平扩展到了多机以借助更多的算力来加速数据预处理而不改变数据本身的加载和与处理方式，所以本身对模型的精度不会有负面影响。对于数据预处理较重的情况
 #### 4.1 模型精度Benchmark
-
+我们在`FashionMNIST`数据集上进行模型训练精度的Benchmark实验，具体代码细节见[测试文件](https://github.com/eedalong/Dpex/tree/main/tests)
 | **Accuracy**(%) | **Loss** | **GPU Settings** | **DpexDataLoader(distributed_mode=?)** | **Epoch** | **Learning rate** | **Batch size** |
 | --------------- | -------- | ---------------- | ------------------------------ | --------- | ----------------- | -------------- |
 | 90.65           | 0.137    | Single GPU       | True                           | 40        | 0.001             | 100            |
