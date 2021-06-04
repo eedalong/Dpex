@@ -2,7 +2,7 @@
 ### 一、前言
 
 随着GPU与CPU的算力差距越来越大以及模型训练时的预处理Pipeline变得越来越复杂，CPU部分的数据预处理已经逐渐成为了模型训练的瓶颈所在，这导致单机的GPU配置的提升并不能带来期望的线性加速。预处理性能瓶颈的本质在于每个GPU能够使用的CPU算力受限，
-为了解决这个问题NVIDIA提出了scale up的方案——GPU数据预处理库[DALI](https://github.com/NVIDIA/DALI)，Tensorflow给出了scale out的方案——分布式数据预处理组件[DataService](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/core/data/service),而在这里我们给出scale out的方案——分布式数据预处理库Dpex。
+为了解决这个问题NVIDIA提出了scale up的方案——GPU数据预处理库[DALI](https://github.com/NVIDIA/DALI)，Tensorflow给出了scale out的方案——分布式数据预处理组件[DataService](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/core/data/service),而在这里我们给出Pytorch生态中的scale out方案——分布式数据预处理组件Dpex。
 
 ![](imgs/1.1.png)
 ![](imgs/1.2.png)
