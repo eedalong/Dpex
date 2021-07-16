@@ -13,7 +13,9 @@ Dpex的采用了和Pytorch的DataLoader同样的架构设计并借助Ray将数�
 ### 三、使用示例
 不仅在设计上，Dpex的实现上也完全兼容Pytorch的DataLoader。当并行数据预处理时，若设置`distribute_mode`为`True`则`DpexDataLoader`使用
 `_RayDataLoaderIter`实现分布式数据预处理，当设置为`False`时`DpexDataLoader`退回到使用Pytorch本身的`_MultiProcessingDataLoaderIter`
-实现并行数据预处理与加载。在Pytorch训练中使用Dpex非常的简单，只需要将使用到Pytorch的`DataLoader`的地方替换为Dpex中的`DpexDataLoader`即可，当你的训练机器本身为Ray集群中的一个节点时，设置 distribute_mode=True可以启用分布式数据预处理。在下面我们给出单卡训练，使用DataParallel进行多卡训练以及使用DDP进行多卡训练时使用Dpex的示例，具体可参考测试文件。    
+实现并行数据预处理与加载。在Pytorch训练中使用Dpex非常的简单，只需要将使用到Pytorch的`DataLoader`的地方替换为Dpex中的`DpexDataLoader`即可，当你的训练机器本身为Ray集群中的一个节点时，设置 
+distribute_mode=True可以启用分布式数据预处理。在下面我们给出单卡训练，使用DataParallel进行多卡训练以及使用DDP进行多卡训练时使用Dpex的示例，具体可参考测试文件。    
+    
     class DpexDataLoader(torch.utils.data.DataLoader):
         def __init__(self, dataset: Dataset[T_co], distribute_mode: Optional[bool] = False, head_address="auto", batch_size: Optional[int] = 1,
                      shuffle: bool = False, sampler: Optional[Sampler[int]] = None,
