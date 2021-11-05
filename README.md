@@ -15,7 +15,7 @@ Dpex的采用了和Pytorch的DataLoader同样的架构设计并借助Ray将数�
 `_RayDataLoaderIter`实现分布式数据预处理，当设置为`False`时`DpexDataLoader`退回到使用Pytorch本身的`_MultiProcessingDataLoaderIter`
 实现并行数据预处理与加载。在Pytorch训练中使用Dpex非常的简单，只需要将使用到Pytorch的`DataLoader`的地方替换为Dpex中的`DpexDataLoader`即可，当你的训练机器本身为Ray集群中的一个节点时，设置 
 distribute_mode=True可以启用分布式数据预处理。在下面我们给出单卡训练，使用DataParallel进行多卡训练以及使用DDP进行多卡训练时使用Dpex的示例，具体可参考测试文件。    
-    
+ ``` python
     class DpexDataLoader(torch.utils.data.DataLoader):
         def __init__(self, dataset: Dataset[T_co], distribute_mode: Optional[bool] = False, head_address="auto", batch_size: Optional[int] = 1,
                      shuffle: bool = False, sampler: Optional[Sampler[int]] = None,
@@ -26,10 +26,10 @@ distribute_mode=True可以启用分布式数据预处理。在下面我们给出
                      multiprocessing_context=None, generator=None,
                      *, prefetch_factor: int = 2):
     
-
+```
 #### 3.1 单卡训练
 如下我们给出单卡训练时使用DpexDataLoader的示例代码，具体代码细节参见[测试代码文件](https://github.com/eedalong/Dpex/blob/main/tests/test.py).
-    
+``` python    
     from torchvision import datasets
     from torchvision.transforms import ToTensor
     from Dpex import dataloader
@@ -47,10 +47,11 @@ distribute_mode=True可以启用分布式数据预处理。在下面我们给出
         for index, (image, label) in enumerate(train_loader):
            # your train process
            pass
-
+```
 #### 3.2 基于DataParallel的多卡训练
 如下我们给出使用DataParallel并行训练时使用DpexDataLoader的示例代码，具体代码细节参见[测试代码文件](https://github.com/eedalong/Dpex/blob/main/tests/pytorch_data_parallel.py).
 
+``` python
     import torch
     import torch.nn as nn
     from torch.autograd import Variable
@@ -78,12 +79,13 @@ distribute_mode=True可以启用分布式数据预处理。在下面我们给出
     for data in data_loader:
        # train your own model
        pass
-
+```
 
 
 #### 3.3 基于DDP的多卡训练
 如下我们给出使用DDP并行训练时使用DpexDataLoader的示例代码，具体代码细节参见[测试代码文件](https://github.com/eedalong/Dpex/blob/main/tests/pytorch_ddp.py).
     
+ ``` python
     import torch
     import torch.nn as nn
     from torch.utils.data import Dataset
@@ -150,6 +152,7 @@ distribute_mode=True可以启用分布式数据预处理。在下面我们给出
     
         output = model(input_var)
         print("Outside: input size", input_var.size(), "output_size", output.size())
+```
 ### 四、Benchmark
 在接下来的Benchamark中我们核心展示两个部分的内容:
  - DpexDataLoader对于模型训练精度的影响
